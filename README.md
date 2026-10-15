@@ -2,13 +2,13 @@
 
 **Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/ht26-a1-group-01/ -->
 
-**Group:** <!-- Names of everyone in the group -->
+**Group:** <!-- Nawaal, Ella, Melina, Dina -->
 
-<!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
+<!-- One or two sentences: Electric Guitar, it is played by strumming the strings -->
 
 ## How to play
 
-<!-- Which keys do what? Fill in the table, and add a row for every key or group of keys. -->
+<!-- Sliding a finger across multiple keybaord keys results in multiple strings being played. pressing more than one keyboard key at the same time results in a chord being played. -->
 
 | Key | What it does                                                |
 | --- | ----------------------------------------------------------- |
