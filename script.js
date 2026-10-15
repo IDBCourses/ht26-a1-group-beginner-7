@@ -32,8 +32,8 @@ let octave = 4;
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
 //const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
-const synth = new Tone.PluckSynth(Tone.Synth).toDestination();
-//const synth = new Tone.AutoFilter(Tone.Synth).toDestination();
+//const synth = new Tone.PluckSynth(Tone.Synth).toDestination();
+const synth = new Tone.AutoFilter(Tone.Synth).toDestination();
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
@@ -55,7 +55,7 @@ function keyDown(event) {
 
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
-  
+
     console.log("Key down:", event.key);
 
     // Example: replace this with your own instrument.
