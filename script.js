@@ -21,8 +21,11 @@
 // ---------- Settings ----------
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which key does what, which notes you can play, the tempo.
-const exampleKey = "a"; // the key that plays the example note
-const exampleNote = "C4"; // the note it plays
+//const exampleKey = "a"; // the key that plays the example note
+//const exampleNote = "C4"; // the note it plays
+
+
+const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
 
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
@@ -30,7 +33,8 @@ const exampleNote = "C4"; // the note it plays
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
-const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
+//const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
+const guitar = new Tone.PluckSynth().toDestination(); // can play several notes at once
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -56,8 +60,23 @@ function keyDown(event) {
     console.log("Key down:", event.key);
 
     // Example: replace this with your own instrument.
-    if (event.key === exampleKey) {
-      synth.triggerAttack(exampleNote, Tone.now()); // keeps sounding until triggerRelease
+    if (event.key === "a") {
+      guitar.triggerAttack(strings[0], Tone.now()); // keeps sounding until triggerRelease
+    }
+    else if (event.key === "s") {
+      guitar.triggerAttack(strings[1], Tone.now());
+    }
+    else if (event.key === "d") {
+      guitar.triggerAttack(strings[2], Tone.now());
+    }
+    else if (event.key === "f") {
+      guitar.triggerAttack(strings[3], Tone.now());
+    }
+    else if (event.key === "g") {
+      guitar.triggerAttack(strings[4], Tone.now());
+    }
+    else if (event.key === "h") {
+      guitar.triggerAttack(strings[5], Tone.now());
     }
   }
 }
@@ -65,10 +84,26 @@ function keyDown(event) {
 // Runs every time a key comes up.
 function keyUp(event) {
   console.log("Key up:", event.key);
+  let time = Tone.now(); // the current time, in seconds
 
   // Example: replace this with your own instrument.
-  if (event.key === exampleKey) {
-    synth.triggerRelease(exampleNote, Tone.now());
+  if (event.key === "a") {
+    guitar.triggerRelease(strings[0], time);
+  }
+  else if (event.key === "s") {
+    guitar.triggerRelease(strings[1], time);
+  }
+  else if (event.key === "d") {
+    guitar.triggerRelease(strings[2], time);
+  }
+  else if (event.key === "f") {
+    guitar.triggerRelease(strings[3], time);
+  }
+  else if (event.key === "g") {
+    guitar.triggerRelease(strings[4], time);
+  }
+  else if (event.key === "h") {
+    guitar.triggerRelease(strings[5], time);
   }
 }
 
