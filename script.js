@@ -26,15 +26,40 @@
 
 
 const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
+const wahFrequencies = ["2n", "4n", "8n", "16n"];// slow -> fast
+const wahDepths = [0.3, 0.6, 0.8, 1];// subtle -> full
 
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
+let autoFilterOn = false;// toggle for the wah
+//let wahPreset =0;
+
+//Bounds + step sizes for arrow keys
+
+
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
-//const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
-const guitar = new Tone.PluckSynth().toDestination(); // can play several notes at once
+const synth = new Tone.PolySynth(Tone.Synth); // can play several notes at once
+
+const autoFilter = new Tone.AutoFilter("4n").start();
+autoFilter.frequency.value = wahFrequencies[0];// sweep speed
+autoFilter.baseFrequency = 200;// lowest cutoff
+autoFilter.octaves = 2.6;// sweep height, vocal range
+autoFilter.depth.value = wahDepths[0];// sweep intensity
+autoFilter.wet.value = 0;//amount of effect
+
+//Vibrato
+const vibrato = new Tone.Vibrato(5, 0.8);// strat: 5 Hz, depth 0.8
+
+//chain -> instrument -> vibrato ->autoFilter -> speakers
+const guitar = new Tone.PluckSynth();//wires the guitar's output into the filter's input
+   guitar.chain(vibrato, autoFilter, Tone.Destination);//guitar -> autoFilter -> speakers
+   synth.chain(vibrato, autoFilter, Tone.Destination);
+
+
+//autoFilter.toDestination().start();//wires the filter's output into the speakers
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -50,14 +75,32 @@ function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
+
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
+function changeVibrato(event) {
+  if (event.key === "ArrowUp") {
+    vibrato.frequency.value += 1;
+   if (vibrato.frequency.value > 20)
+    vibrato.frequency.value = 1;
+    console.log("Vibrato Hz:", vibrato.frequency.value);
+  }
+  if (event.key === "ArrowDown") {
+    vibrato.frequency.value -= 1;
+  if (vibrato.frequency.value < 1)
+    vibrato.frequency.value = 1;
+  console.log("Vibrato Hz:", vibrato.frequency.value);
+  }
+}
+
 function keyDown(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
   // Holding a key down sends keydown again and again. Only react to the first one.
-  if (event.repeat === false) {
-    console.log("Key down:", event.key);
+  if (event.repeat) return;
+  console.log("Key down:", event.key);
+
+
 
     // Example: replace this with your own instrument.
     if (event.key === "a") {
@@ -78,34 +121,45 @@ function keyDown(event) {
     else if (event.key === "h") {
       guitar.triggerAttack(strings[5], Tone.now());
     }
+
+    changeVibrato(event);
+
+    if (event.key === " ") {
+      event.preventDefault();
+      autoFilterOn = !autoFilterOn;
+      autoFilter.wet.value = autoFilter ? 1 : 0;
+      console.log("Wah:", autoFilterOn ? "ON" : "OFF");
+    }
+   }
+
+// Vibrato frequency up / down
+/*function changeVibrato(event) {
+  if (event.key === "ArrowUp") {
+    vibrato.frequency.value += 1;
+   if (vibrato.frequency.value > 20)
+    vibrato.frequency.value = 1;
+    console.log("Vibrato Hz:", vibrato.frequency.value);
   }
-}
+  if (event.key === "ArrowDown") {
+    vibrato.frequency.value -= 1;
+  if (vibrato.frequency.value < 1)
+    vibrato.frequency.value = 1;
+  console.log("Vibrato Hz:", vibrato.frequency.value);
+  } if (event.key === " ") {
+    event.preventDefault();
+    autoFilterOn = !autoFilterOn;
+    console.log("Wah:", autoFilterOn ? "ON" : "OFF");
+  }
+}*/
+
+
 
 // Runs every time a key comes up.
 function keyUp(event) {
-  console.log("Key up:", event.key);
-  let time = Tone.now(); // the current time, in seconds
+  if (event.key === "z")
+    synth.triggerRelease(Tone.now());
 
-  // Example: replace this with your own instrument.
-  if (event.key === "a") {
-    guitar.triggerRelease(strings[0], time);
-  }
-  else if (event.key === "s") {
-    guitar.triggerRelease(strings[1], time);
-  }
-  else if (event.key === "d") {
-    guitar.triggerRelease(strings[2], time);
-  }
-  else if (event.key === "f") {
-    guitar.triggerRelease(strings[3], time);
-  }
-  else if (event.key === "g") {
-    guitar.triggerRelease(strings[4], time);
-  }
-  else if (event.key === "h") {
-    guitar.triggerRelease(strings[5], time);
-  }
-}
+ }
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
@@ -114,8 +168,10 @@ function setup() {
   use(); // start the use loop
 
   // Put your event listener code here
+
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
+  //window.addEventListener("ArrowUp", changeSettings);
 }
 
 setup(); // Always remember to call setup()!
