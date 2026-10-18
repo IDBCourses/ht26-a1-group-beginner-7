@@ -36,7 +36,7 @@ const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's
 
 const reverb = new Tone.Reverb({
   decay: 6,
-  wet: 0.6,
+  wet: 0.4,
 }).toDestination(); // reverb effect with decay value of 3 seconds.
 
 const guitar = new Tone.PluckSynth().connect(reverb); //plays  notes and connects the reverb effect to them.
@@ -55,6 +55,18 @@ function update() {
 // Use the state to make sound. This is called every 100ms.
 function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
+}
+
+//controls Reverb
+function reverbEffect(event, isPressed) { //aq8831
+  //aq8831
+  if (event.key === "Enter") {
+    if (isPressed) {
+      reverb.wet.rampTo(0.7, 0.3); //increases reverb to 70%
+    } else {
+      reverb.wet.rampTo(0.4, 0.3); //returns reverb to orginal/base value
+    }
+  }
 }
 
 // ---------- Controls (Event Handlers) ----------
@@ -115,6 +127,18 @@ function setup() {
   // Put your event listener code here
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
+
+  //---------- Reverb ---------- //aq8831
+
+  //Increase reverb when Enter is pressed
+  window.addEventListener("keydown", function (event) {
+    reverbEffect(event, true);
+  });
+
+  //Return reverb to base value
+  window.addEventListener("keyup", function (event) {
+    reverbEffect(event, false);
+  });
 }
 
 setup(); // Always remember to call setup()!
