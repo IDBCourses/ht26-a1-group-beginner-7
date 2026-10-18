@@ -35,13 +35,13 @@ const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's
 //const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
 const reverb = new Tone.Reverb({
-  decay: 3,
-  wet: 0,
+  decay: 6,
+  wet: 0.4,
 }).toDestination(); // reverb effect with decay value of 3 seconds.
 
 const guitar = new Tone.PluckSynth().connect(reverb); //plays  notes and connects the reverb effect to them.
 
-let reverbOn = false; //reverb is currently off
+let reverbOn = true; //reverb is currently off
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -57,17 +57,23 @@ function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
+//controls Reverb
+function reverbEffect(event, isPressed) { //aq8831
+  //aq8831
+  if (event.key === "Enter") {
+    if (isPressed) {
+      reverb.wet.rampTo(0.7, 0.3); //increases reverb to 70%
+    } else {
+      reverb.wet.rampTo(0.4, 0.3); //returns reverb to orginal/base value
+    }
+  }
+}
+
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
 function keyDown(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
-  //Turns on reverb if shift key is pressed
-  if (event.key === "Shift") {
-    reverbOn = true;
-    reverb.wet.value = 0.5; //how much of the reverb effect is heard.
-    return;
-  }
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
@@ -92,11 +98,7 @@ function keyDown(event) {
 // Runs every time a key comes up.
 function keyUp(event) {
   // Turn off reverb when shift is pressed
-  if (event.key === "Shift") {
-    reverbOn = false;
-    reverb.wet.value = 0; //how much of the reverb effect is heard.
-    return;
-  }
+
   console.log("Key up:", event.key);
   let time = Tone.now(); // the current time, in seconds
 
@@ -125,6 +127,18 @@ function setup() {
   // Put your event listener code here
   window.addEventListener("keydown", keyDown);
   window.addEventListener("keyup", keyUp);
+
+  //---------- Reverb ---------- //aq8831
+
+  //Increase reverb when Enter is pressed
+  window.addEventListener("keydown", function (event) {
+    reverbEffect(event, true);
+  });
+
+  //Return reverb to base value
+  window.addEventListener("keyup", function (event) {
+    reverbEffect(event, false);
+  });
 }
 
 setup(); // Always remember to call setup()!
