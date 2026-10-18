@@ -127,7 +127,7 @@ function keyDown(event) {
     if (event.key === " ") {
       event.preventDefault();
       autoFilterOn = !autoFilterOn;
-      autoFilter.wet.value = autoFilter ? 1 : 0;
+      autoFilter.wet.value = autoFilterOn ? 1 : 0;
       console.log("Wah:", autoFilterOn ? "ON" : "OFF");
     }
    }
