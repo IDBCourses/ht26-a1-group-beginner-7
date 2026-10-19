@@ -28,12 +28,12 @@ const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's
 const strings2 = ["C1", "D1", "E1", "G1", "A1", "C1"]; // changed notes of a guiter strings
 const Chord = ["C", "E", "G", "B", "D"];
 let order = 0;
- 
+
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
 
-let reverbOn = false; //reverb is currently off 
+
 let isBuzzy = true;
 let pPressed = true;
 let octave = 4
@@ -43,7 +43,7 @@ let duration = "8n";
 // Make the instruments and plug them into the speakers.
 //const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
-const reverb = new Tone.Reverb({decay: 3, wet: 0,}).toDestination(); // reverb effect with decay value of 3 seconds.
+
 const guitar = new Tone.PluckSynth().connect(reverb); //plays  notes and connects the reverb effect to them.
 const synth = new Tone.PolySynth().toDestination();
 const distortion = new Tone.Distortion(0.8).toDestination();
@@ -62,29 +62,23 @@ function update() {
 // ---------- Use ----------
 // Use the state to make sound. This is called every 100ms.
 function use() {
-  
+
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
- 
+
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
 function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
-  //Turns on reverb if shift key is pressed
-  if (event.key === "Enter") {
-    reverbOn = true;
-    reverb.wet.value = 0.5; //how much of the reverb effect is heard.
-    return;
-  }
+
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
-  
 
     // press a-h keys to make "strings" play
     if (event.key === "a") {
-      guitar.triggerAttack(strings[0], Tone.now()); 
+      guitar.triggerAttack(strings[0], Tone.now());
     } else if (event.key === "s") {
       guitar.triggerAttack(strings[1], Tone.now());
     } else if (event.key === "d") {
@@ -95,11 +89,11 @@ function pluckStrings(event) {
       guitar.triggerAttack(strings[4], Tone.now());
     } else if (event.key === "h") {
       guitar.triggerAttack(strings[5], Tone.now());
-      
+
 // Author: at1575
 // hold "shift" and then press the same a-h keys to make "strings2" play
-    } if (event.key === "A") { 
-      guitar.triggerAttack(strings2[0], Tone.now()); 
+    } if (event.key === "A") {
+      guitar.triggerAttack(strings2[0], Tone.now());
     } else if (event.key === "S") {
       guitar.triggerAttack(strings2[1], Tone.now());
     } else if (event.key === "D") {
@@ -114,18 +108,18 @@ function pluckStrings(event) {
   }
 }
 // Author: at1575
-function playNote(event) { 
+function playNote(event) {
 if (event.key === "p") {
   if (isBuzzy) {
    buzzy.triggerAttackRelease(Chord[order] + octave, duration); // sounds higher-pitched
    console.log(order, Chord[order] + octave);
-  } else if (!isBuzzy) { 
+  } else if (!isBuzzy) {
     synth.triggerAttackRelease(Chord[order] + octave, duration); // sounds lower-pitched
     console.log(order, Chord[order] + octave);
-  } 
+  }
 }
   order += 1;
-  if (order > (Chord.length - 1)) { // if order becomes more than the chord length (5), 
+  if (order > (Chord.length - 1)) { // if order becomes more than the chord length (5),
   // it starts from 0 again
     order = 0;
  }
