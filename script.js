@@ -78,6 +78,7 @@ function use() {
 
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
+//Author : as9854
 function changeVibrato(event) {
   if (event.key === "ArrowUp") {
     vibrato.frequency.value += 1;
