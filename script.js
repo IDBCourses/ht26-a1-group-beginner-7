@@ -25,8 +25,8 @@
 //const exampleNote = "C4"; // the note it plays
 
 const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
-const strings2 = ["C2", "D2", "E2", "G2", "A2", "C2"]; // changed notes of a guiter strings
-const Chord = ["C1", "E1", "G1", "B1", "D1"];
+const strings2 = ["C1", "D1", "E1", "G1", "A1", "C1"]; // changed notes of a guiter strings
+const Chord = ["C", "E", "G", "B", "D"];
 let order = 0;
  
 // ---------- State ----------
@@ -35,6 +35,9 @@ let order = 0;
 
 let reverbOn = false; //reverb is currently off 
 let isBuzzy = true;
+let pPressed = true;
+let octave = 4
+let duration = "8n";
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
@@ -79,9 +82,9 @@ function pluckStrings(event) {
     console.log("Key down:", event.key);
   
 
-    // Example: replace this with your own instrument.
+    // press a-h keys to make "strings" play
     if (event.key === "a") {
-      guitar.triggerAttack(strings[0], Tone.now()); // keeps sounding until triggerRelease
+      guitar.triggerAttack(strings[0], Tone.now()); 
     } else if (event.key === "s") {
       guitar.triggerAttack(strings[1], Tone.now());
     } else if (event.key === "d") {
@@ -92,9 +95,11 @@ function pluckStrings(event) {
       guitar.triggerAttack(strings[4], Tone.now());
     } else if (event.key === "h") {
       guitar.triggerAttack(strings[5], Tone.now());
-
-    } if (event.key === "A") { // at1575
-      guitar.triggerAttack(strings2[0], Tone.now()); // keeps sounding until triggerRelease
+      
+// Author: at1575
+// hold "shift" and then press the same a-h keys to make "strings2" play
+    } if (event.key === "A") { 
+      guitar.triggerAttack(strings2[0], Tone.now()); 
     } else if (event.key === "S") {
       guitar.triggerAttack(strings2[1], Tone.now());
     } else if (event.key === "D") {
@@ -108,19 +113,34 @@ function pluckStrings(event) {
     }
   }
 }
-function changeNotes(event) { //at1575
- let duration = "8n";
-if (event.key === "z" && isBuzzy) {
-  console.log(order);
-  synth.triggerAttackRelease(Chord[order], duration);
+// Author: at1575
+function playNote(event) { 
+if (event.key === "p") {
+  if (isBuzzy) {
+   buzzy.triggerAttackRelease(Chord[order] + octave, duration); // sounds higher-pitched
+   console.log(order, Chord[order] + octave);
+  } else if (!isBuzzy) { 
+    synth.triggerAttackRelease(Chord[order] + octave, duration); // sounds lower-pitched
+    console.log(order, Chord[order] + octave);
+  } 
+}
   order += 1;
-  if (order > (Chord.length - 1)) {
+  if (order > (Chord.length - 1)) { // if order becomes more than the chord length (5), 
+  // it starts from 0 again
     order = 0;
-  }
  }
 }
-
-
+// Author: at1575
+function changeSettings(event) {
+if (event.key === "z") {  // decreases the octave by 1
+  octave = octave - 1;
+ } else if (event.key === "x") { // increases the octave by 1
+  octave = octave + 1;
+ } else if (event.key === "b") { // if isBuzzy is true, it becomes false
+  isBuzzy = !isBuzzy;
+  console.log(isBuzzy)
+ }
+}
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
@@ -130,7 +150,8 @@ function setup() {
 
   // Put your event listener code here
   window.addEventListener("keydown", pluckStrings);
-  window.addEventListener("keydown", changeNotes);
+  window.addEventListener("keydown", playNote);
+  window.addEventListener("keydown", changeSettings);
 
 }
 
