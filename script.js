@@ -25,23 +25,28 @@
 //const exampleNote = "C4"; // the note it plays
 
 const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
-
+const strings2 = ["C2", "D2", "E2", "G2", "A2", "C2"]; // changed notes of a guiter strings
+const Chord = ["C1", "E1", "G1", "B1", "D1"];
+let order = 0;
+ 
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
+
+let reverbOn = false; //reverb is currently off 
+let isBuzzy = true;
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
 //const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 
-const reverb = new Tone.Reverb({
-  decay: 3,
-  wet: 0,
-}).toDestination(); // reverb effect with decay value of 3 seconds.
-
+const reverb = new Tone.Reverb({decay: 3, wet: 0,}).toDestination(); // reverb effect with decay value of 3 seconds.
 const guitar = new Tone.PluckSynth().connect(reverb); //plays  notes and connects the reverb effect to them.
+const synth = new Tone.PolySynth().toDestination();
+const distortion = new Tone.Distortion(0.8).toDestination();
+const buzzy = new Tone.PolySynth().connect(distortion);
 
-let reverbOn = false; //reverb is currently off
+
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -54,16 +59,17 @@ function update() {
 // ---------- Use ----------
 // Use the state to make sound. This is called every 100ms.
 function use() {
+  
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
-
+ 
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
-function keyDown(event) {
+function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
   //Turns on reverb if shift key is pressed
-  if (event.key === "Shift") {
+  if (event.key === "Enter") {
     reverbOn = true;
     reverb.wet.value = 0.5; //how much of the reverb effect is heard.
     return;
@@ -71,6 +77,7 @@ function keyDown(event) {
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
+  
 
     // Example: replace this with your own instrument.
     if (event.key === "a") {
@@ -85,36 +92,35 @@ function keyDown(event) {
       guitar.triggerAttack(strings[4], Tone.now());
     } else if (event.key === "h") {
       guitar.triggerAttack(strings[5], Tone.now());
+
+    } if (event.key === "A") { // at1575
+      guitar.triggerAttack(strings2[0], Tone.now()); // keeps sounding until triggerRelease
+    } else if (event.key === "S") {
+      guitar.triggerAttack(strings2[1], Tone.now());
+    } else if (event.key === "D") {
+      guitar.triggerAttack(strings2[2], Tone.now());
+    } else if (event.key === "F") {
+      guitar.triggerAttack(strings2[3], Tone.now());
+    } else if (event.key === "G") {
+      guitar.triggerAttack(strings2[4], Tone.now());
+    } else if (event.key === "H") {
+      guitar.triggerAttack(strings2[5], Tone.now());
     }
   }
 }
-
-// Runs every time a key comes up.
-function keyUp(event) {
-  // Turn off reverb when shift is pressed
-  if (event.key === "Shift") {
-    reverbOn = false;
-    reverb.wet.value = 0; //how much of the reverb effect is heard.
-    return;
+function changeNotes(event) { //at1575
+ let duration = "8n";
+if (event.key === "z" && isBuzzy) {
+  console.log(order);
+  synth.triggerAttackRelease(Chord[order], duration);
+  order += 1;
+  if (order > (Chord.length - 1)) {
+    order = 0;
   }
-  console.log("Key up:", event.key);
-  let time = Tone.now(); // the current time, in seconds
-
-  // Example: replace this with your own instrument.
-  if (event.key === "a") {
-    guitar.triggerRelease(strings[0], time);
-  } else if (event.key === "s") {
-    guitar.triggerRelease(strings[1], time);
-  } else if (event.key === "d") {
-    guitar.triggerRelease(strings[2], time);
-  } else if (event.key === "f") {
-    guitar.triggerRelease(strings[3], time);
-  } else if (event.key === "g") {
-    guitar.triggerRelease(strings[4], time);
-  } else if (event.key === "h") {
-    guitar.triggerRelease(strings[5], time);
-  }
+ }
 }
+
+
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
@@ -123,8 +129,10 @@ function setup() {
   use(); // start the use loop
 
   // Put your event listener code here
-  window.addEventListener("keydown", keyDown);
-  window.addEventListener("keyup", keyUp);
+  window.addEventListener("keydown", pluckStrings);
+  window.addEventListener("keydown", changeNotes);
+
 }
+
 
 setup(); // Always remember to call setup()!
