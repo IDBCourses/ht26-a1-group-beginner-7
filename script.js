@@ -25,6 +25,9 @@
 //const exampleNote = "C4"; // the note it plays
 
 const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
+const wahFrequencies = ["2n", "4n", "8n", "16n"];// slow -> fast
+const wahDepths = [0.3, 0.6, 0.8, 1];// subtle -> full
+
 const strings2 = ["C1", "D1", "E1", "G1", "A1", "C1"]; // changed notes of a guiter strings
 const Chord = ["C", "E", "G", "B", "D"];
 let order = 0;
@@ -32,6 +35,12 @@ let order = 0;
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
+let autoFilterOn = false;// toggle for the wah
+//let wahPreset =0;
+
+//Bounds + step sizes for arrow keys
+
+
 
 let reverbOn = false; //reverb is currently off 
 let isBuzzy = true;
@@ -41,11 +50,24 @@ let duration = "8n";
 
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
-//const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
+
+const autoFilter = new Tone.AutoFilter("4n").start();
+autoFilter.frequency.value = wahFrequencies[0];// sweep speed
+autoFilter.baseFrequency = 200;// lowest cutoff
+autoFilter.octaves = 2.6;// sweep height, vocal range
+autoFilter.depth.value = wahDepths[0];// sweep intensity
+autoFilter.wet.value = 0;//amount of effect
+
+//Vibrato
+const vibrato = new Tone.Vibrato(5, 0.8);// strat: 5 Hz, depth 0.8
+
+//chain -> instrument -> vibrato ->autoFilter -> speakers
+const guitar = new Tone.PluckSynth().connect(reverb);//wires the guitar's output into the filter's input
+   guitar.chain(vibrato, autoFilter, Tone.Destination);//guitar -> autoFilter -> speakers
+   synth.chain(vibrato, autoFilter, Tone.Destination);
 
 const reverb = new Tone.Reverb({decay: 3, wet: 0,}).toDestination(); // reverb effect with decay value of 3 seconds.
-const guitar = new Tone.PluckSynth().connect(reverb); //plays  notes and connects the reverb effect to them.
-const synth = new Tone.PolySynth().toDestination();
+const synth = new Tone.PolySynth(Tone.Synth).toDestination();
 const distortion = new Tone.Distortion(0.8).toDestination();
 const buzzy = new Tone.PolySynth().connect(distortion);
 
@@ -65,9 +87,29 @@ function use() {
   
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
- 
+
+
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
+//Author : as9854
+function changeVibrato(event) {
+
+  if (event.key === "ArrowUp") {
+    vibrato.frequency.value += 1;
+   if (vibrato.frequency.value > 20)
+    vibrato.frequency.value = 1;
+    console.log("Vibrato Hz:", vibrato.frequency.value);
+  }
+  if (event.key === "ArrowDown") {
+    vibrato.frequency.value -= 1;
+  if (vibrato.frequency.value < 1)
+    vibrato.frequency.value = 1;
+  console.log("Vibrato Hz:", vibrato.frequency.value);
+  }
+}
+
+
+
 function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
@@ -111,6 +153,24 @@ function pluckStrings(event) {
     } else if (event.key === "H") {
       guitar.triggerAttack(strings2[5], Tone.now());
     }
+
+    changeVibrato(event);
+
+    if (event.key === " ") {
+      event.preventDefault();
+      autoFilterOn = !autoFilterOn;
+      autoFilter.wet.value = autoFilterOn ? 1 : 0;
+      console.log("Wah:", autoFilterOn ? "ON" : "OFF");
+    }
+   }
+
+// Vibrato frequency up / down
+function changeVibrato(event) {
+  if (event.key === "ArrowUp") {
+    vibrato.frequency.value += 1;
+   if (vibrato.frequency.value > 20)
+    vibrato.frequency.value = 1;
+    console.log("Vibrato Hz:", vibrato.frequency.value);
   }
 }
 // Author: at1575
@@ -149,6 +209,8 @@ function setup() {
   use(); // start the use loop
 
   // Put your event listener code here
+
+  window.addEventListener("keydown", keyDown);
   window.addEventListener("keydown", pluckStrings);
   window.addEventListener("keydown", playNote);
   window.addEventListener("keydown", changeSettings);
