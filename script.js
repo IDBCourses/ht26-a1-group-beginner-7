@@ -71,10 +71,10 @@ function use() {
 function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
-
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
+
 
     // press a-h keys to make "strings" play
     if (event.key === "a") {
