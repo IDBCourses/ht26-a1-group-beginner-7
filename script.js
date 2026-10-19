@@ -24,7 +24,9 @@
 //const exampleKey = "a"; // the key that plays the example note
 //const exampleNote = "C4"; // the note it plays
 
+
 const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
+
 const wahFrequencies = ["2n", "4n", "8n", "16n"];// slow -> fast
 const wahDepths = [0.3, 0.6, 0.8, 1];// subtle -> full
 
@@ -42,7 +44,7 @@ let autoFilterOn = false;// toggle for the wah
 
 
 
-let reverbOn = false; //reverb is currently off 
+let reverbOn = true; //reverb is always on 
 let isBuzzy = true;
 let pPressed = true;
 let octave = 4
@@ -61,16 +63,20 @@ autoFilter.wet.value = 0;//amount of effect
 //Vibrato
 const vibrato = new Tone.Vibrato(5, 0.8);// strat: 5 Hz, depth 0.8
 
+const reverb = new Tone.Reverb({
+  decay: 6,
+  wet: 0.4,
+}).toDestination(); // reverb effect 
 
-const reverb = new Tone.Reverb({decay: 3, wet: 0,}).toDestination(); // reverb effect with decay value of 3 seconds.
-const synth = new Tone.PolySynth(Tone.Synth).toDestination();
-const distortion = new Tone.Distortion(0.8).toDestination();
-const buzzy = new Tone.PolySynth().connect(distortion);
-
-//chain -> instrument -> vibrato ->autoFilter -> speakers
 const guitar = new Tone.PluckSynth();//wires the guitar's output into the filter's input
-   guitar.chain(vibrato, autoFilter, Tone.Destination);//guitar -> autoFilter -> speakers
-   synth.chain(vibrato, autoFilter, Tone.Destination);
+   guitar.chain(vibrato, autoFilter, reverb);//guitar -> autoFilter -> speakers
+
+
+const synth = new Tone.PolySynth(Tone.Synth);
+   synth.chain(vibrato, autoFilter, reverb);
+
+const distortion = new Tone.Distortion(0.8);
+const buzzy = new Tone.PolySynth().chain(distortion, reverb);
 
 
 
@@ -89,6 +95,16 @@ function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
+//controls Reverb Author : aq8831
+function reverbEffect(event, isPressed) { 
+  if (event.key === "Enter") {
+    if (isPressed) {
+      reverb.wet.rampTo(0.7, 0.3); //increases reverb to 70%
+    } else {
+      reverb.wet.rampTo(0.4, 0.3); //returns reverb to orginal/base value
+    }
+  }
+}
 
 // ---------- Controls (Event Handlers) ----------
 // Runs every time a key goes down.
@@ -114,12 +130,6 @@ function changeVibrato(event) {
 function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
-  //Turns on reverb if shift key is pressed
-  if (event.key === "Enter") {
-    reverbOn = true;
-    reverb.wet.value = 0.5; //how much of the reverb effect is heard.
-    return;
-  }
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
@@ -216,6 +226,17 @@ function setup() {
   window.addEventListener("keydown", playNote);
   window.addEventListener("keydown", changeSettings);
 
+  //---------- Reverb ---------- //Author: aq8831
+
+  //Increase reverb when Enter is pressed
+  window.addEventListener("keydown", function (event) {
+    reverbEffect(event, true);
+  });
+
+  //Return reverb to base value
+  window.addEventListener("keyup", function (event) {
+    reverbEffect(event, false);
+  });
 }
 
 
