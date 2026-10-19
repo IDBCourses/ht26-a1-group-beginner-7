@@ -61,15 +61,16 @@ autoFilter.wet.value = 0;//amount of effect
 //Vibrato
 const vibrato = new Tone.Vibrato(5, 0.8);// strat: 5 Hz, depth 0.8
 
-//chain -> instrument -> vibrato ->autoFilter -> speakers
-const guitar = new Tone.PluckSynth().connect(reverb);//wires the guitar's output into the filter's input
-   guitar.chain(vibrato, autoFilter, Tone.Destination);//guitar -> autoFilter -> speakers
-   synth.chain(vibrato, autoFilter, Tone.Destination);
 
 const reverb = new Tone.Reverb({decay: 3, wet: 0,}).toDestination(); // reverb effect with decay value of 3 seconds.
 const synth = new Tone.PolySynth(Tone.Synth).toDestination();
 const distortion = new Tone.Distortion(0.8).toDestination();
 const buzzy = new Tone.PolySynth().connect(distortion);
+
+//chain -> instrument -> vibrato ->autoFilter -> speakers
+const guitar = new Tone.PluckSynth();//wires the guitar's output into the filter's input
+   guitar.chain(vibrato, autoFilter, Tone.Destination);//guitar -> autoFilter -> speakers
+   synth.chain(vibrato, autoFilter, Tone.Destination);
 
 
 
@@ -163,6 +164,7 @@ function pluckStrings(event) {
       console.log("Wah:", autoFilterOn ? "ON" : "OFF");
     }
    }
+  }
 
 // Vibrato frequency up / down
 function changeVibrato(event) {
@@ -210,7 +212,6 @@ function setup() {
 
   // Put your event listener code here
 
-  window.addEventListener("keydown", keyDown);
   window.addEventListener("keydown", pluckStrings);
   window.addEventListener("keydown", playNote);
   window.addEventListener("keydown", changeSettings);
