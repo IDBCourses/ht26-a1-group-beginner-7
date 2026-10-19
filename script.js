@@ -24,12 +24,9 @@
 //const exampleKey = "a"; // the key that plays the example note
 //const exampleNote = "C4"; // the note it plays
 
-
 const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
-
 const wahFrequencies = ["2n", "4n", "8n", "16n"];// slow -> fast
 const wahDepths = [0.3, 0.6, 0.8, 1];// subtle -> full
-
 const strings2 = ["C1", "D1", "E1", "G1", "A1", "C1"]; // changed notes of a guiter strings
 const Chord = ["C", "E", "G", "B", "D"];
 let order = 0;
@@ -37,13 +34,10 @@ let order = 0;
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
-let autoFilterOn = false;// toggle for the wah
+
 //let wahPreset =0;
-
 //Bounds + step sizes for arrow keys
-
-
-
+let autoFilterOn = false;// toggle for the wah
 let reverbOn = true; //reverb is always on 
 let isBuzzy = true;
 let pPressed = true;
@@ -110,7 +104,6 @@ function reverbEffect(event, isPressed) {
 // Runs every time a key goes down.
 //Author : as9854
 function changeVibrato(event) {
-
   if (event.key === "ArrowUp") {
     vibrato.frequency.value += 1;
    if (vibrato.frequency.value > 20)
@@ -125,16 +118,12 @@ function changeVibrato(event) {
   }
 }
 
-
-
 function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
-  
-
     // press a-h keys to make "strings" play
     if (event.key === "a") {
       guitar.triggerAttack(strings[0], Tone.now()); 
@@ -166,7 +155,6 @@ function pluckStrings(event) {
     }
 
     changeVibrato(event);
-
     if (event.key === " ") {
       event.preventDefault();
       autoFilterOn = !autoFilterOn;
@@ -190,10 +178,10 @@ function playNote(event) {
 if (event.key === "p") {
   if (isBuzzy) {
    buzzy.triggerAttackRelease(Chord[order] + octave, duration); // sounds higher-pitched
-   console.log(order, Chord[order] + octave);
+  console.log("i:", order, "note:", Chord[order] + octave);
   } else if (!isBuzzy) { 
     synth.triggerAttackRelease(Chord[order] + octave, duration); // sounds lower-pitched
-    console.log(order, Chord[order] + octave);
+  console.log("i:", order, "note:", Chord[order] + octave);
   } 
 }
   order += 1;
@@ -206,8 +194,10 @@ if (event.key === "p") {
 function changeSettings(event) {
 if (event.key === "z") {  // decreases the octave by 1
   octave = octave - 1;
+  console.log("current octave:", octave)
  } else if (event.key === "x") { // increases the octave by 1
   octave = octave + 1;
+  console.log("current octave:", octave)
  } else if (event.key === "b") { // if isBuzzy is true, it becomes false
   isBuzzy = !isBuzzy;
   console.log(isBuzzy)
