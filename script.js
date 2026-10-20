@@ -24,8 +24,7 @@
 //const exampleKey = "a"; // the key that plays the example note
 //const exampleNote = "C4"; // the note it plays
 
-
-const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // the notes of a guitar's strings
+const strings = ["E2", "A2", "D3", "G3", "B3", "E4"]; // Base notes for the guitar's strings
 
 const wahFrequencies = ["2n", "4n", "8n", "16n"];// slow -> fast
 const wahDepths = [0.3, 0.6, 0.8, 1];// subtle -> full
@@ -38,16 +37,10 @@ let order = 0;
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
 let autoFilterOn = false;// toggle for the wah
-//let wahPreset =0;
-
-//Bounds + step sizes for arrow keys
-
-
-
 let reverbOn = true; //reverb is always on 
 let isBuzzy = true;
 let pPressed = true;
-let octave = 4
+let octave = 4;
 let duration = "8n";
 
 // ---------- Sound ----------
@@ -71,14 +64,11 @@ const reverb = new Tone.Reverb({
 const guitar = new Tone.PluckSynth();//wires the guitar's output into the filter's input
    guitar.chain(vibrato, autoFilter, reverb);//guitar -> autoFilter -> speakers
 
-
 const synth = new Tone.PolySynth(Tone.Synth);
    synth.chain(vibrato, autoFilter, reverb);
 
 const distortion = new Tone.Distortion(0.8);
 const buzzy = new Tone.PolySynth().chain(distortion, reverb);
-
-
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -95,9 +85,11 @@ function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
+//--------- Reverb on/off ("Enter") -------------
 //controls Reverb Author : aq8831
 function reverbEffect(event, isPressed) { 
   if (event.key === "Enter") {
+     console.log("Reverb increase")
     if (isPressed) {
       reverb.wet.rampTo(0.7, 0.3); //increases reverb to 70%
     } else {
@@ -106,7 +98,7 @@ function reverbEffect(event, isPressed) {
   }
 }
 
-// ---------- Controls (Event Handlers) ----------
+// ---------- Frequency ("ArrowUp"/"ArrowDown") ----------
 // Runs every time a key goes down.
 //Author : as9854
 function changeVibrato(event) {
@@ -125,17 +117,16 @@ function changeVibrato(event) {
   }
 }
 
-
-
+// ------------- Base strings ("a"-"h") ---------------
+// Author: ar8228, Ella Nedell
+// press a-h keys to make "strings" play
 function pluckStrings(event) {
   Tone.start(); // browsers only allow sound after the player has pressed something
 
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
-  
-
-    // press a-h keys to make "strings" play
+    
     if (event.key === "a") {
       guitar.triggerAttack(strings[0], Tone.now()); 
     } else if (event.key === "s") {
@@ -149,6 +140,7 @@ function pluckStrings(event) {
     } else if (event.key === "h") {
       guitar.triggerAttack(strings[5], Tone.now());
       
+// ------------- String array1 ("a"-"h" + "shift") ---------------
 // Author: at1575
 // hold "shift" and then press the same a-h keys to make "strings2" play
     } if (event.key === "A") { 
@@ -165,8 +157,6 @@ function pluckStrings(event) {
       guitar.triggerAttack(strings2[5], Tone.now());
     }
 
-    changeVibrato(event);
-
     if (event.key === " ") {
       event.preventDefault();
       autoFilterOn = !autoFilterOn;
@@ -176,17 +166,10 @@ function pluckStrings(event) {
    }
   }
 
-// Vibrato frequency up / down
-function changeVibrato(event) {
-  if (event.key === "ArrowUp") {
-    vibrato.frequency.value += 1;
-   if (vibrato.frequency.value > 20)
-    vibrato.frequency.value = 1;
-    console.log("Vibrato Hz:", vibrato.frequency.value);
-  }
-}
+// --------------- Chords & Octive ("p") ----------------
 // Author: at1575
 function playNote(event) { 
+if(event.repeat === false) {
 if (event.key === "p") {
   if (isBuzzy) {
    buzzy.triggerAttackRelease(Chord[order] + octave, duration); // sounds higher-pitched
@@ -200,18 +183,64 @@ if (event.key === "p") {
   if (order > (Chord.length - 1)) { // if order becomes more than the chord length (5), 
   // it starts from 0 again
     order = 0;
+  }
  }
 }
+// --------- Octave ("z", "x", "b") -----------
 // Author: at1575
 function changeSettings(event) {
 if (event.key === "z") {  // decreases the octave by 1
   octave = octave - 1;
+  console.log(octave);
  } else if (event.key === "x") { // increases the octave by 1
   octave = octave + 1;
+  console.log(octave)
  } else if (event.key === "b") { // if isBuzzy is true, it becomes false
   isBuzzy = !isBuzzy;
-  console.log(isBuzzy)
+  console.log(isBuzzy);
  }
+}
+
+//----------- Swiping keys ("a"-"h" Quickly) ---------------
+// Author: ar8228, Ella Nedell
+let preKey = null;
+let preKeyTime = 0;
+
+const row = ["a", "s", "d", "f", "g", "h"]; //strings
+const swipeTimeLimit = 150; // milliseconds
+
+function keyDown(event) {
+  if (event.repeat) return;
+  const currentIndex = row.indexOf(event.key);
+
+  // Ignore keys outside the guitar row
+  if (currentIndex === -1) {
+    preKey = null;
+    preKeyTime = 0;
+    return;
+  }
+
+  const currentTime = performance.now();
+
+   if (preKey !== null) {
+    const previousIndex = row.indexOf(preKey);
+    const timeDifference = currentTime - preKeyTime;
+    const direction = currentIndex - previousIndex;
+
+    // Only count the swipe if its in the time limit
+ if (timeDifference >= 0 && timeDifference<= swipeTimeLimit) {
+  if (direction === 1) {
+    console.log("Swipe Right");
+   } 
+   else if (direction === -1) {
+    console.log("Swipe Left");
+   }
+    } else {
+      console.log("Too slow - swipe ignored");
+    }
+  }
+  preKey = event.key;
+  preKeyTime = currentTime;
 }
 
 // ---------- Setup ----------
@@ -222,11 +251,14 @@ function setup() {
 
   // Put your event listener code here
 
+  window.addEventListener("keydown", keyDown);
+  window.addEventListener("keydown", changeVibrato);
   window.addEventListener("keydown", pluckStrings);
   window.addEventListener("keydown", playNote);
   window.addEventListener("keydown", changeSettings);
 
-  //---------- Reverb ---------- //Author: aq8831
+ //---------- Reverb ---------- 
+ //Author: aq8831
 
   //Increase reverb when Enter is pressed
   window.addEventListener("keydown", function (event) {
@@ -238,6 +270,5 @@ function setup() {
     reverbEffect(event, false);
   });
 }
-
 
 setup(); // Always remember to call setup()!
