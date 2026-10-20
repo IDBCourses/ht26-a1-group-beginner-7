@@ -1,21 +1,35 @@
 # Our instrument
 
-**Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/ht26-a1-group-01/ -->
+**Play it here:** https://idbcourses.github.io/ht26-a1-group-beginner-7/ 
 
-**Group:** <!-- Nawaal, Ella, Melina, Dina -->
+**Group 7:** Dina Dabbous, Nawaal Khan, Melina Kladou, Ella Nedell
 
-<!-- One or two sentences: Electric Guitar, it is played by strumming the strings -->
+Electric Guitar: it´s played by strumming or plucking the strings and can be altered by applying effects. 
 
 ## How to play
-
-<!-- Sliding a finger across multiple keybaord keys results in multiple strings being played. pressing more than one keyboard key at the same time results in a chord being played. -->
+User can slide finger across the six "string" keys to replicate the sound of a guitar or pluck the strings individually by pressing the corresponding key. User can also add extra effects onto the strings by pressing/holding the corresponding keys.
 
 | Key | What it does                                                |
 | --- | ----------------------------------------------------------- |
-| `A` | Plays a C4 while you hold it down (the example: replace it) |
-|     |                                                             |
+| `A` | Plays a E2 once |
+| `S` | Plays a A2 once |
+| `D` | Plays a D3 once |
+| `F` | Plays a G3 once |
+| `G` | Plays a B3 once |
+| `H` | Plays a E4 once |                  
 
-<!-- Anything else a player needs to know: how to get started, combinations of keys, a good thing to try first. -->
+| `A-H Quickly` | Logs the swipe direction| 
+| `P` | Plays different notes with each key press | 
+| `Z` | Decreases the octave by one | 
+| `X` | Increases the octave by one | 
+| `B` | Used to raise or lower the pitch, with distortion and buzzy effect | 
+| `Shift` | Switches the array of strings[] to strings1[] | 
+| `Space` | Turns on and off Wet Value | 
+| `Enter` | Increases reverb to 70% | 
+| `ArrowUp` |Adds one extra value to the Vibrato | 
+| `ArrowDown` |Removes one value to the Vibrato | 
+
+<!-- Anything else a player needs to know: how to get started, combinations of keys, a good thing to try first. --> Start by strumming/plucking the strings.
 
 ---
 
