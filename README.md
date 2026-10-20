@@ -19,9 +19,10 @@ User can slide finger across the six "string" keys to replicate the sound of a g
 | `H` | Plays a E4 once |                  
 
 | `A-H Quickly` | Logs the swipe direction| 
-| `P` | Raises and lowers the pitch | 
+| `P` | Plays different notes with each key press | 
 | `Z` | Decreases the octave by one | 
 | `X` | Increases the octave by one | 
+| `B` | Used to raise or lower the pitch, with distortion and buzzy effect | 
 | `Shift` | Switches the array of strings[] to strings1[] | 
 | `Space` | Turns on and off Wet Value | 
 | `Enter` | Increases reverb to 70% | 
