@@ -32,12 +32,12 @@ const wahDepths = [0.3, 0.6, 0.8, 1];// subtle -> full
 const strings2 = ["C1", "D1", "E1", "G1", "A1", "C1"]; // changed notes of a guiter strings
 const Chord = ["C", "E", "G", "B", "D"];
 let order = 0;
- 
+
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: which octave you're playing in, or whether a drone is on.
 let autoFilterOn = false;// toggle for the wah
-let reverbOn = true; //reverb is always on 
+let reverbOn = true; //reverb is always on
 let isBuzzy = true;
 let pPressed = true;
 let octave = 4;
@@ -59,7 +59,7 @@ const vibrato = new Tone.Vibrato(5, 0.8);// strat: 5 Hz, depth 0.8
 const reverb = new Tone.Reverb({
   decay: 6,
   wet: 0.4,
-}).toDestination(); // reverb effect 
+}).toDestination(); // reverb effect
 
 const guitar = new Tone.PluckSynth();//wires the guitar's output into the filter's input
    guitar.chain(vibrato, autoFilter, reverb);//guitar -> autoFilter -> speakers
@@ -81,13 +81,13 @@ function update() {
 // ---------- Use ----------
 // Use the state to make sound. This is called every 100ms.
 function use() {
-  
+
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
 //--------- Reverb on/off ("Enter") -------------
 //controls Reverb Author : aq8831
-function reverbEffect(event, isPressed) { 
+function reverbEffect(event, isPressed) {
   if (event.key === "Enter") {
      console.log("Reverb increase")
     if (isPressed) {
@@ -100,7 +100,7 @@ function reverbEffect(event, isPressed) {
 
 // ---------- Frequency ("ArrowUp"/"ArrowDown") ----------
 // Runs every time a key goes down.
-//Author : as9854
+//Author : as5984
 function changeVibrato(event) {
 
   if (event.key === "ArrowUp") {
@@ -126,9 +126,9 @@ function pluckStrings(event) {
   // Holding a key down sends keydown again and again. Only react to the first one.
   if (event.repeat === false) {
     console.log("Key down:", event.key);
-    
+
     if (event.key === "a") {
-      guitar.triggerAttack(strings[0], Tone.now()); 
+      guitar.triggerAttack(strings[0], Tone.now());
     } else if (event.key === "s") {
       guitar.triggerAttack(strings[1], Tone.now());
     } else if (event.key === "d") {
@@ -139,12 +139,12 @@ function pluckStrings(event) {
       guitar.triggerAttack(strings[4], Tone.now());
     } else if (event.key === "h") {
       guitar.triggerAttack(strings[5], Tone.now());
-      
+
 // ------------- String array1 ("a"-"h" + "shift") ---------------
 // Author: at1575
 // hold "shift" and then press the same a-h keys to make "strings2" play
-    } if (event.key === "A") { 
-      guitar.triggerAttack(strings2[0], Tone.now()); 
+    } if (event.key === "A") {
+      guitar.triggerAttack(strings2[0], Tone.now());
     } else if (event.key === "S") {
       guitar.triggerAttack(strings2[1], Tone.now());
     } else if (event.key === "D") {
@@ -168,19 +168,19 @@ function pluckStrings(event) {
 
 // --------------- Chords & Octive ("p") ----------------
 // Author: at1575
-function playNote(event) { 
+function playNote(event) {
 if(event.repeat === false) {
 if (event.key === "p") {
   if (isBuzzy) {
    buzzy.triggerAttackRelease(Chord[order] + octave, duration); // sounds higher-pitched
    console.log("Order:", order, "note:", Chord[order] + octave);
-  } else if (!isBuzzy) { 
+  } else if (!isBuzzy) {
     synth.triggerAttackRelease(Chord[order] + octave, duration); // sounds lower-pitched
     console.log("Order:", order, "note:", Chord[order] + octave);
-  } 
+  }
 }
   order += 1;
-  if (order > (Chord.length - 1)) { // if order becomes more than the chord length (5), 
+  if (order > (Chord.length - 1)) { // if order becomes more than the chord length (5),
   // it starts from 0 again
     order = 0;
   }
@@ -231,7 +231,7 @@ function keyDown(event) {
  if (timeDifference >= 0 && timeDifference<= swipeTimeLimit) {
   if (direction === 1) {
     console.log("Swipe Right");
-   } 
+   }
    else if (direction === -1) {
     console.log("Swipe Left");
    }
@@ -257,7 +257,7 @@ function setup() {
   window.addEventListener("keydown", playNote);
   window.addEventListener("keydown", changeSettings);
 
- //---------- Reverb ---------- 
+ //---------- Reverb ----------
  //Author: aq8831
 
   //Increase reverb when Enter is pressed
