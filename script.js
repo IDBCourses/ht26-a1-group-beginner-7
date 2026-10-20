@@ -173,10 +173,10 @@ if(event.repeat === false) {
 if (event.key === "p") {
   if (isBuzzy) {
    buzzy.triggerAttackRelease(Chord[order] + octave, duration); // sounds higher-pitched
-   console.log(order, Chord[order] + octave);
+   console.log("Order:", order, "note:", Chord[order] + octave);
   } else if (!isBuzzy) { 
     synth.triggerAttackRelease(Chord[order] + octave, duration); // sounds lower-pitched
-    console.log(order, Chord[order] + octave);
+    console.log("Order:", order, "note:", Chord[order] + octave);
   } 
 }
   order += 1;
@@ -191,10 +191,10 @@ if (event.key === "p") {
 function changeSettings(event) {
 if (event.key === "z") {  // decreases the octave by 1
   octave = octave - 1;
-  console.log(octave);
+  console.log("current octave:", octave);
  } else if (event.key === "x") { // increases the octave by 1
   octave = octave + 1;
-  console.log(octave)
+  console.log("current octave:", octave);
  } else if (event.key === "b") { // if isBuzzy is true, it becomes false
   isBuzzy = !isBuzzy;
   console.log(isBuzzy);
